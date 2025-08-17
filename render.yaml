@@ -4,6 +4,8 @@ services:
     env: static
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
+    customDomains:
+      - name: kiss-tracker.com
     envVars:
       - key: VITE_API_URL
         value: https://kiss-tracker-backend.onrender.com
