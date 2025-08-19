@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
+import { useToast } from '../components/Toast'
 
 interface TrackingData {
   trackingNumber: string
@@ -21,6 +22,7 @@ function UpdateTracking() {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { showToast, ToastComponent } = useToast()
   
   const updateKey = searchParams.get('key')
 
@@ -28,7 +30,24 @@ function UpdateTracking() {
   const getDefaultEta = () => {
     const now = new Date()
     now.setHours(now.getHours() + 1)
-    return now.toISOString().slice(0, 16)
+    // Format for datetime-local input using local timezone
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+  
+  // Convert ISO string to datetime-local format
+  const formatDateForInput = (isoString: string) => {
+    const date = new Date(isoString)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
   }
 
   useEffect(() => {
@@ -42,8 +61,8 @@ function UpdateTracking() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/update?key=${updateKey}`)
         setTrackingData(response.data)
-        // Use existing ETA or default to now + 1 hour
-        setNewEta(response.data.eta || getDefaultEta())
+        // Use existing ETA (converted to local format) or default to now + 1 hour
+        setNewEta(response.data.eta ? formatDateForInput(response.data.eta) : getDefaultEta())
       } catch (error: any) {
         console.error('Error fetching tracking data:', error)
         if (error.response?.status === 401 || error.response?.status === 403) {
@@ -71,13 +90,13 @@ function UpdateTracking() {
         location: currentLocation.trim()
       })
       setCurrentLocation('')
-      alert('Location updated successfully! 📍')
+      showToast('Location updated successfully! 📍')
     } catch (error: any) {
       console.error('Error updating location:', error)
       if (error.response?.status === 401 || error.response?.status === 403) {
-        alert('Authentication error. Please use the correct update link.')
+        showToast('Authentication error. Please use the correct update link.')
       } else {
-        alert('Error updating location. Please try again.')
+        showToast('Error updating location. Please try again.')
       }
     } finally {
       setUpdating(false)
@@ -94,13 +113,13 @@ function UpdateTracking() {
         eta: newEta
       })
       setTrackingData(prev => prev ? { ...prev, eta: newEta } : null)
-      alert('ETA updated successfully! ⏰')
+      showToast('ETA updated successfully! ⏰')
     } catch (error: any) {
       console.error('Error updating ETA:', error)
       if (error.response?.status === 401 || error.response?.status === 403) {
-        alert('Authentication error. Please use the correct update link.')
+        showToast('Authentication error. Please use the correct update link.')
       } else {
-        alert('Error updating ETA. Please try again.')
+        showToast('Error updating ETA. Please try again.')
       }
     } finally {
       setUpdating(false)
@@ -110,7 +129,7 @@ function UpdateTracking() {
   const copyShareLink = () => {
     if (trackingData?.shareLink) {
       navigator.clipboard.writeText(trackingData.shareLink)
-      alert('Share link copied to clipboard! 📋')
+      showToast('Share link copied to clipboard! 📋')
     }
   }
 
@@ -170,26 +189,20 @@ function UpdateTracking() {
         <h2 style={{ marginBottom: '1rem' }}>📤 Share with Your Special Someone</h2>
         <div className="share-link">
           <p><strong>Public tracking link</strong> (for your recipient):</p>
-          <div className="share-url">{trackingData.shareLink}</div>
-          <div className="button-center">
-            <button className="button" onClick={copyShareLink}>
-              📋 Copy Public Link
-            </button>
+          <div className="share-url" onClick={copyShareLink} style={{ cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ flex: 1, paddingRight: '0.5rem' }}>{trackingData.shareLink}</span>
+            <span style={{ fontSize: '1.1rem', opacity: '0.6' }}>⎘</span>
           </div>
           
           <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid #e1e1e1' }} />
           
           <p><strong>Private update link</strong> (keep this secret!):</p>
-          <div className="share-url" style={{ fontSize: '0.8rem', color: '#666' }}>
-            {trackingData.updateLink}
-          </div>
-          <div className="button-center">
-            <button className="button button-secondary" onClick={() => {
-              navigator.clipboard.writeText(trackingData.updateLink)
-              alert('Private update link copied! 🔒')
-            }}>
-              🔒 Copy Update Link
-            </button>
+          <div className="share-url" onClick={() => {
+            navigator.clipboard.writeText(trackingData.updateLink)
+            showToast('Private update link copied! 🔒')
+          }} style={{ fontSize: '0.8rem', color: '#666', cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ flex: 1, paddingRight: '0.5rem' }}>{trackingData.updateLink}</span>
+            <span style={{ fontSize: '1.1rem', opacity: '0.6' }}>⎘</span>
           </div>
           
           <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '1rem', fontStyle: 'italic' }}>
@@ -248,6 +261,7 @@ function UpdateTracking() {
           ← Back to Home
         </button>
       </div>
+      {ToastComponent}
     </div>
   )
 }

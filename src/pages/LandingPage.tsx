@@ -4,6 +4,15 @@ import { useNavigate } from 'react-router-dom'
 function LandingPage() {
   const [trackingNumber, setTrackingNumber] = useState('')
   const navigate = useNavigate()
+  
+  // Randomly select a logo from available logos
+  const getRandomLogo = () => {
+    const logos = ['logo_01.png', 'logo_02.png', 'logo_03.png', 'logo_04.png', 'logo_05.png', 'logo_06.png', 'logo_07.png', 'logo_08.png']
+    const randomIndex = Math.floor(Math.random() * logos.length)
+    return `/medias/${logos[randomIndex]}`
+  }
+  
+  const [logoSrc] = useState(getRandomLogo())
 
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,7 +28,9 @@ function LandingPage() {
   return (
     <div className="container">
       <div className="header">
-        <div className="logo">😘</div>
+        <div className="logo">
+          <img src={logoSrc} alt="Kiss Tracker" style={{ height: '150px' }} />
+        </div>
         <h1 className="title">Kiss Tracker</h1>
         <p className="subtitle">Track your love delivery with romantic precision</p>
       </div>

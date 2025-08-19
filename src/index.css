@@ -36,12 +36,11 @@ body {
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .logo {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
 }
 
 .title {
@@ -204,4 +203,15 @@ body {
   font-family: monospace;
   margin: 0.5rem 0;
   word-break: break-all;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

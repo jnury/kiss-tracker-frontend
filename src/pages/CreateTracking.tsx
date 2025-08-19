@@ -1,13 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useToast } from '../components/Toast'
 
 function CreateTracking() {
   // Generate default ETA (now + 1 hour)
   const getDefaultEta = () => {
     const now = new Date()
     now.setHours(now.getHours() + 1)
-    return now.toISOString().slice(0, 16) // Format for datetime-local input
+    // Format for datetime-local input using local timezone
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    const hours = String(now.getHours()).padStart(2, '0')
+    const minutes = String(now.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
   }
 
   const [formData, setFormData] = useState({
@@ -17,6 +24,7 @@ function CreateTracking() {
   })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { showToast, ToastComponent } = useToast()
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -38,7 +46,7 @@ function CreateTracking() {
       navigate(`/update/${response.data.trackingNumber}?key=${updateKey}`)
     } catch (error) {
       console.error('Error creating tracking:', error)
-      alert('Error creating tracking. Please try again.')
+      showToast('Error creating tracking. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -105,6 +113,7 @@ function CreateTracking() {
           ← Back to Home
         </button>
       </div>
+      {ToastComponent}
     </div>
   )
 }
