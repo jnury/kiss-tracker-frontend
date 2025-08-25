@@ -1,5 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logo01 from '../assets/logo_01.png'
+import logo02 from '../assets/logo_02.png'
+import logo03 from '../assets/logo_03.png'
+import logo04 from '../assets/logo_04.png'
+import logo05 from '../assets/logo_05.png'
+import logo06 from '../assets/logo_06.png'
+import logo07 from '../assets/logo_07.png'
+import logo08 from '../assets/logo_08.png'
 
 function LandingPage() {
   const [trackingNumber, setTrackingNumber] = useState('')
@@ -7,9 +15,9 @@ function LandingPage() {
   
   // Randomly select a logo from available logos
   const getRandomLogo = () => {
-    const logos = ['logo_01.png', 'logo_02.png', 'logo_03.png', 'logo_04.png', 'logo_05.png', 'logo_06.png', 'logo_07.png', 'logo_08.png']
+    const logos = [logo01, logo02, logo03, logo04, logo05, logo06, logo07, logo08]
     const randomIndex = Math.floor(Math.random() * logos.length)
-    return `/medias/${logos[randomIndex]}`
+    return logos[randomIndex]
   }
   
   const [logoSrc] = useState(getRandomLogo())
