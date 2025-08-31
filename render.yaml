@@ -4,7 +4,7 @@ services:
     env: static
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
-    customDomains:
+    domains:
       - kiss-tracker.com
       - www.kiss-tracker.com
     envVars:
