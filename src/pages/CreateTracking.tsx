@@ -33,12 +33,22 @@ function CreateTracking() {
     })
   }
 
+  // Convert datetime-local to UTC ISO string
+  const convertToUTC = (datetimeLocal: string) => {
+    const localDate = new Date(datetimeLocal)
+    return localDate.toISOString()
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking`, formData)
+      const dataToSend = {
+        ...formData,
+        eta: convertToUTC(formData.eta)
+      }
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking`, dataToSend)
       // Extract the update key from the updateLink URL
       const updateLink = response.data.updateLink
       const urlParams = new URLSearchParams(updateLink.split('?')[1])

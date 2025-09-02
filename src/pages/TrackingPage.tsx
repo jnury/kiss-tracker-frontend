@@ -175,8 +175,8 @@ function TrackingPage() {
       return { text: `in ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`, isPast: false }
     } else if (diffHours < 24) {
       const remainingMinutes = diffMinutes % 60
-      const hourText = `${diffHours} hour${diffHours !== 1 ? 's' : ''}`
-      const minuteText = remainingMinutes > 0 ? ` and ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}` : ''
+      const hourText = `${diffHours}h`
+      const minuteText = remainingMinutes > 0 ? `${remainingMinutes.toString().padStart(2, '0')}` : '00'
       return { text: `in ${hourText}${minuteText}`, isPast: false }
     } else {
       const remainingHours = diffHours % 24
@@ -206,7 +206,7 @@ function TrackingPage() {
     <div className="container">
       <h1 className="title" style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5em' }}>Kiss Tracking</h1>
 
-      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '350px' }}>
+      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
         <div className="tracking-info" style={{ marginBottom: '0', gap: '0.5rem' }}>
           <div className="info-item">
             <span className="info-label">Tracking Number</span>
@@ -232,8 +232,8 @@ function TrackingPage() {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '350px' }}>
-        <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em' }}>
+      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
+        <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em', color: '#4a5568' }}>
           Expected Arrival
         </h2>
         <div style={{ 
@@ -244,7 +244,7 @@ function TrackingPage() {
           textAlign: 'center'
         }}>
           <div style={{ 
-            fontSize: '1.5rem', 
+            fontSize: '2rem', 
             fontWeight: 'bold', 
             marginBottom: '0.25rem',
             color: formatTimeRemaining(trackingData.eta).isPast ? '#ffeb3b' : '#fff'
@@ -265,8 +265,8 @@ function TrackingPage() {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '350px' }}>
-        <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em' }}>Delivery Progress</h2>
+      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
+        <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em', color: '#4a5568' }}>Delivery Progress</h2>
         {trackingData.trackRecords.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '1rem', color: '#666' }}>
             <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🔄</div>

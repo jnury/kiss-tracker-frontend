@@ -41,9 +41,9 @@ function UpdateTracking() {
     return `${year}-${month}-${day}T${hours}:${minutes}`
   }
   
-  // Convert ISO string to datetime-local format
-  const formatDateForInput = (isoString: string) => {
-    const date = new Date(isoString)
+  // Convert UTC ISO string to datetime-local format (local timezone)
+  const formatDateForInput = (utcIsoString: string) => {
+    const date = new Date(utcIsoString)
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
@@ -167,6 +167,12 @@ function UpdateTracking() {
     }
   }
 
+  // Convert datetime-local to UTC ISO string
+  const convertToUTC = (datetimeLocal: string) => {
+    const localDate = new Date(datetimeLocal)
+    return localDate.toISOString()
+  }
+
   const handleUpdateEta = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newEta) return
@@ -174,9 +180,9 @@ function UpdateTracking() {
     setUpdating(true)
     try {
       await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/eta?key=${updateKey}`, {
-        eta: newEta
+        eta: convertToUTC(newEta)
       })
-      setTrackingData(prev => prev ? { ...prev, eta: newEta } : null)
+      setTrackingData(prev => prev ? { ...prev, eta: convertToUTC(newEta) } : null)
       showToast('ETA updated successfully!')
     } catch (error: any) {
       console.error('Error updating ETA:', error)
