@@ -8,6 +8,7 @@ interface TrackingData {
   kissProvider: string
   destination: string
   eta: string
+  status: string
   shareLink: string
   updateLink: string
 }
@@ -18,6 +19,7 @@ function UpdateTracking() {
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null)
   const [currentLocation, setCurrentLocation] = useState('')
   const [newEta, setNewEta] = useState('')
+  const [newStatus, setNewStatus] = useState('')
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState('')
@@ -63,6 +65,7 @@ function UpdateTracking() {
         setTrackingData(response.data)
         // Use existing ETA (converted to local format) or default to now + 1 hour
         setNewEta(response.data.eta ? formatDateForInput(response.data.eta) : getDefaultEta())
+        setNewStatus(response.data.status || 'Preparing')
       } catch (error: any) {
         console.error('Error fetching tracking data:', error)
         if (error.response?.status === 401 || error.response?.status === 403) {
@@ -79,6 +82,67 @@ function UpdateTracking() {
       fetchTrackingData()
     }
   }, [trackingNumber, updateKey])
+
+  // SSE connection for real-time updates  
+  useEffect(() => {
+    if (!trackingNumber || loading || error) return
+
+    let eventSource: EventSource | null = null
+    let reconnectTimer: NodeJS.Timeout | null = null
+    let isConnected = false
+
+    const connect = () => {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      eventSource = new EventSource(`${apiUrl}/api/tracking/${trackingNumber}/events`)
+      
+      console.log('📡 Update page connecting to SSE for tracking:', trackingNumber)
+      
+      eventSource.addEventListener('connected', (event) => {
+        console.log('📡 SSE connected on update page:', JSON.parse(event.data))
+        isConnected = true
+      })
+      
+      eventSource.addEventListener('status-change', (event) => {
+        const data = JSON.parse(event.data)
+        console.log('📡 Status update received:', data)
+        setTrackingData(prev => prev ? { ...prev, status: data.status } : prev)
+        setNewStatus(data.status)
+      })
+      
+      eventSource.addEventListener('eta-change', (event) => {
+        const data = JSON.parse(event.data)
+        console.log('📡 ETA update received:', data)
+        setTrackingData(prev => prev ? { ...prev, eta: data.eta } : prev)
+        setNewEta(formatDateForInput(data.eta))
+      })
+      
+      eventSource.onerror = (error) => {
+        console.error('📡 SSE error on update page:', error)
+        isConnected = false
+        
+        // Auto-reconnect after 5 seconds
+        if (!reconnectTimer) {
+          reconnectTimer = setTimeout(() => {
+            console.log('📡 Attempting SSE reconnection on update page...')
+            eventSource?.close()
+            reconnectTimer = null
+            connect()
+          }, 5000)
+        }
+      }
+    }
+
+    connect()
+
+    return () => {
+      console.log('📡 Closing SSE connection from update page')
+      isConnected = false
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer)
+      }
+      eventSource?.close()
+    }
+  }, [trackingNumber, loading, error])
 
   const handleAddLocation = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -113,13 +177,36 @@ function UpdateTracking() {
         eta: newEta
       })
       setTrackingData(prev => prev ? { ...prev, eta: newEta } : null)
-      showToast('ETA updated successfully! ⏰')
+      showToast('ETA updated successfully!')
     } catch (error: any) {
       console.error('Error updating ETA:', error)
       if (error.response?.status === 401 || error.response?.status === 403) {
         showToast('Authentication error. Please use the correct update link.')
       } else {
         showToast('Error updating ETA. Please try again.')
+      }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleUpdateStatus = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newStatus) return
+
+    setUpdating(true)
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/status?key=${updateKey}`, {
+        status: newStatus
+      })
+      setTrackingData(prev => prev ? { ...prev, status: newStatus } : null)
+      showToast('Status updated successfully!')
+    } catch (error: any) {
+      console.error('Error updating status:', error)
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        showToast('Authentication error. Please use the correct update link.')
+      } else {
+        showToast('Error updating status. Please try again.')
       }
     } finally {
       setUpdating(false)
@@ -180,13 +267,12 @@ function UpdateTracking() {
   return (
     <div className="container">
       <div className="header">
-        <div className="logo">😘</div>
-        <h1 className="title">Update Kiss Delivery</h1>
-        <p className="subtitle">#{trackingData.trackingNumber}</p>
+        <h1 className="title" style={{ textAlign: 'center' }}>Update Kiss Delivery</h1>
+        <p className="subtitle" style={{ textAlign: 'center' }}>#{trackingData.trackingNumber}</p>
       </div>
 
       <div className="card">
-        <h2 style={{ marginBottom: '1rem' }}>📤 Share with Your Special Someone</h2>
+        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Share with Your Special Someone</h2>
         <div className="share-link">
           <p><strong>Public tracking link</strong> (for your recipient):</p>
           <div className="share-url" onClick={copyShareLink} style={{ cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -212,7 +298,7 @@ function UpdateTracking() {
       </div>
 
       <div className="card">
-        <h2 style={{ marginBottom: '1rem' }}>📍 Add Current Location</h2>
+        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Add Current Location</h2>
         <form onSubmit={handleAddLocation}>
           <div className="input-group">
             <input
@@ -225,14 +311,39 @@ function UpdateTracking() {
           </div>
           <div className="button-center">
             <button type="submit" className="button" disabled={updating}>
-              {updating ? '📍 Updating...' : '📍 Update Location'}
+              {updating ? 'Updating...' : 'Update Location'}
             </button>
           </div>
         </form>
       </div>
 
-      <div className="card">
-        <h2 style={{ marginBottom: '1rem' }}>⏰ Update ETA</h2>
+      <div className="card" style={{ padding: '1.5rem' }}>
+        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update Status</h2>
+        <form onSubmit={handleUpdateStatus}>
+          <div className="input-group">
+            <select
+              className="input"
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              required
+            >
+              <option value="Preparing">Preparing</option>
+              <option value="In Transit">In Transit</option>
+              <option value="Out for Delivery">Out for Delivery</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Delayed">Delayed</option>
+            </select>
+          </div>
+          <div className="button-center">
+            <button type="submit" className="button" disabled={updating}>
+              {updating ? 'Updating...' : 'Update Status'}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="card" style={{ padding: '1.5rem' }}>
+        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update ETA</h2>
         <form onSubmit={handleUpdateEta}>
           <div className="input-group">
             <input
@@ -244,7 +355,7 @@ function UpdateTracking() {
           </div>
           <div className="button-center">
             <button type="submit" className="button" disabled={updating}>
-              {updating ? '⏰ Updating...' : '⏰ Update ETA'}
+              {updating ? 'Updating...' : 'Update ETA'}
             </button>
           </div>
         </form>
@@ -252,13 +363,28 @@ function UpdateTracking() {
 
       <div className="button-center" style={{ gap: '1rem' }}>
         <button 
-          className="button button-secondary" 
+          className="button" 
+          style={{
+            background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+            border: 'none',
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+            fontWeight: 'bold'
+          }}
           onClick={() => navigate(`/track/${trackingNumber}`)}
         >
-          👀 View Tracking Page
+          View Tracking Page
         </button>
-        <button className="button button-secondary" onClick={() => navigate('/')}>
-          ← Back to Home
+        <button 
+          className="button" 
+          style={{
+            background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+            border: 'none',
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+            fontWeight: 'bold'
+          }}
+          onClick={() => navigate('/')}
+        >
+          Back to Home
         </button>
       </div>
       {ToastComponent}

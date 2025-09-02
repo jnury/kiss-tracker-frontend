@@ -55,9 +55,8 @@ function CreateTracking() {
   return (
     <div className="container">
       <div className="header">
-        <div className="logo">😘</div>
-        <h1 className="title">Create Kiss Delivery</h1>
-        <p className="subtitle">Set up tracking for your romantic journey</p>
+        <h1 className="title" style={{ textAlign: 'center' }}>Create Kiss Delivery</h1>
+        <p className="subtitle" style={{ textAlign: 'center' }}>Set up tracking for your romantic journey</p>
       </div>
 
       <div className="card">
@@ -102,15 +101,24 @@ function CreateTracking() {
 
           <div className="button-center">
             <button type="submit" className="button" disabled={loading}>
-              {loading ? '💫 Creating...' : '💌 Create Tracking'}
+              {loading ? 'Creating...' : 'Create Tracking'}
             </button>
           </div>
         </form>
       </div>
 
       <div className="button-center" style={{ marginTop: '2rem' }}>
-        <button className="button button-secondary" onClick={() => navigate('/')}>
-          ← Back to Home
+        <button 
+          className="button" 
+          style={{
+            background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+            border: 'none',
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+            fontWeight: 'bold'
+          }}
+          onClick={() => navigate('/')}
+        >
+          Back to Home
         </button>
       </div>
       {ToastComponent}

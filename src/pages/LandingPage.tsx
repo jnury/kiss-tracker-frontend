@@ -44,9 +44,11 @@ function LandingPage() {
       </div>
 
       <div className="card">
+        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          Enter Tracking Number
+        </h2>
         <form onSubmit={handleTrack}>
           <div className="input-group">
-            <label className="label">Enter Tracking Number</label>
             <input
               type="text"
               className="input"
@@ -57,7 +59,7 @@ function LandingPage() {
           </div>
           <div className="button-center">
             <button type="submit" className="button">
-              💕 Track My Kiss
+              Track My Kiss
             </button>
           </div>
         </form>
@@ -71,8 +73,8 @@ function LandingPage() {
           Let your special someone track your journey to them
         </p>
         <div className="button-center">
-          <button className="button button-secondary" onClick={handleCreateNew}>
-            💌 Create New Tracking
+          <button className="button" onClick={handleCreateNew}>
+            Create New Tracking
           </button>
         </div>
       </div>
