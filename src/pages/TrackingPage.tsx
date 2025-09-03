@@ -163,26 +163,27 @@ function TrackingPage() {
     const eta = new Date(etaString)
     const diffMs = eta.getTime() - now.getTime()
     
-    if (diffMs <= 0) {
-      return { text: 'Delivered! 💕', isPast: true }
-    }
-    
-    const diffMinutes = Math.floor(diffMs / (1000 * 60))
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const absDiffMs = Math.abs(diffMs)
+    const diffMinutes = Math.floor(absDiffMs / (1000 * 60))
+    const diffHours = Math.floor(absDiffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(absDiffMs / (1000 * 60 * 60 * 24))
+    const isPast = diffMs <= 0
     
     if (diffMinutes < 60) {
-      return { text: `in ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`, isPast: false }
+      const timeText = `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`
+      return { text: isPast ? `${timeText} late` : `in ${timeText}`, isPast }
     } else if (diffHours < 24) {
       const remainingMinutes = diffMinutes % 60
       const hourText = `${diffHours}h`
       const minuteText = remainingMinutes > 0 ? `${remainingMinutes.toString().padStart(2, '0')}` : '00'
-      return { text: `in ${hourText}${minuteText}`, isPast: false }
+      const timeText = `${hourText}${minuteText}`
+      return { text: isPast ? `${timeText} late` : `in ${timeText}`, isPast }
     } else {
       const remainingHours = diffHours % 24
       const dayText = `${diffDays} day${diffDays !== 1 ? 's' : ''}`
       const hourText = remainingHours > 0 ? ` and ${remainingHours} hour${remainingHours !== 1 ? 's' : ''}` : ''
-      return { text: `in ${dayText}${hourText}`, isPast: false }
+      const timeText = `${dayText}${hourText}`
+      return { text: isPast ? `${timeText} late` : `in ${timeText}`, isPast }
     }
   }
 
