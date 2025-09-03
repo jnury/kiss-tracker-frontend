@@ -89,6 +89,23 @@ function TrackingPage() {
         setTrackingData(prev => prev ? { ...prev, eta: data.eta } : prev)
       })
       
+      eventSource.addEventListener('destination-change', (event) => {
+        const data = JSON.parse(event.data)
+        console.log('📡 Destination update:', data)
+        setTrackingData(prev => prev ? { ...prev, destination: data.destination } : prev)
+      })
+      
+      eventSource.addEventListener('delivery-removed', (event) => {
+        console.log('📡 Delivery records removed')
+        setTrackingData(prev => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            trackRecords: prev.trackRecords.filter(record => record.location !== 'Delivered')
+          }
+        })
+      })
+      
       eventSource.onerror = (error) => {
         console.error('📡 SSE error:', error)
         isConnected = false
@@ -187,7 +204,10 @@ function TrackingPage() {
     }
   }
 
-  const getStatusIcon = (index: number) => {
+  const getStatusIcon = (index: number, location?: string) => {
+    if (location === 'Delivered') {
+      return '🥳'
+    }
     const icons = ['🚀', '🛣️', '🏃‍♂️', '🎯', '💕']
     return icons[index % icons.length]
   }
@@ -233,38 +253,40 @@ function TrackingPage() {
         </div>
       </div>
 
-      <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
-        <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em', color: '#4a5568' }}>
-          Expected Arrival
-        </h2>
-        <div style={{ 
-          background: 'linear-gradient(135deg, #ff6b9d, #ff8fab)', 
-          color: 'white', 
-          padding: '0.75rem', 
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
+      {trackingData.status !== 'Delivered' && (
+        <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
+          <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em', color: '#4a5568' }}>
+            Expected Arrival
+          </h2>
           <div style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
-            marginBottom: '0.25rem',
-            color: formatTimeRemaining(trackingData.eta).isPast ? '#ffeb3b' : '#fff'
+            background: 'linear-gradient(135deg, #ff6b9d, #ff8fab)', 
+            color: 'white', 
+            padding: '0.75rem', 
+            borderRadius: '8px',
+            textAlign: 'center'
           }}>
-            {formatTimeRemaining(trackingData.eta).text}
-          </div>
-          <div style={{ fontSize: '0.8rem', opacity: '0.8' }}>
-            {new Date(trackingData.eta).toLocaleDateString('en-US', { 
-              weekday: 'short', 
-              month: 'short', 
-              day: 'numeric' 
-            })} at {new Date(trackingData.eta).toLocaleTimeString('en-US', { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false 
-            })}
+            <div style={{ 
+              fontSize: '2rem', 
+              fontWeight: 'bold', 
+              marginBottom: '0.25rem',
+              color: formatTimeRemaining(trackingData.eta).isPast ? '#dc2626' : '#fff'
+            }}>
+              {formatTimeRemaining(trackingData.eta).text}
+            </div>
+            <div style={{ fontSize: '0.8rem', opacity: '0.8' }}>
+              {new Date(trackingData.eta).toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+              })} at {new Date(trackingData.eta).toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
         <h2 style={{ marginBottom: '0.5rem', textAlign: 'center', fontSize: '1.5em', color: '#4a5568' }}>Delivery Progress</h2>
@@ -281,7 +303,7 @@ function TrackingPage() {
               .map((record, index) => (
               <div key={record.id} className="timeline-item">
                 <div className="timeline-dot">
-                  {getStatusIcon(index)}
+                  {getStatusIcon(index, record.location)}
                 </div>
                 <div className="timeline-content">
                   <div className="timeline-location" style={{ fontSize: '1.3em', fontWeight: '500' }}>{record.location}</div>

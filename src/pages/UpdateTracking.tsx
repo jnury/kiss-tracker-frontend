@@ -116,6 +116,23 @@ function UpdateTracking() {
         setNewEta(formatDateForInput(data.eta))
       })
       
+      eventSource.addEventListener('destination-change', (event) => {
+        const data = JSON.parse(event.data)
+        console.log('📡 Destination update received:', data)
+        setTrackingData(prev => prev ? { ...prev, destination: data.destination } : prev)
+      })
+      
+      eventSource.addEventListener('delivery-removed', (event) => {
+        console.log('📡 Delivery records removed on update page')
+        setTrackingData(prev => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            trackRecords: prev.trackRecords?.filter(record => record.location !== 'Delivered') || []
+          }
+        })
+      })
+      
       eventSource.onerror = (error) => {
         console.error('📡 SSE error on update page:', error)
         isConnected = false
@@ -190,6 +207,28 @@ function UpdateTracking() {
         showToast('Authentication error. Please use the correct update link.')
       } else {
         showToast('Error updating ETA. Please try again.')
+      }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const handleUpdateDestination = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!trackingData) return
+
+    setUpdating(true)
+    try {
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/destination?key=${updateKey}`, {
+        destination: trackingData.destination
+      })
+      showToast('Destination updated successfully!')
+    } catch (error: any) {
+      console.error('Error updating destination:', error)
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        showToast('Authentication error. Please use the correct update link.')
+      } else {
+        showToast('Error updating destination. Please try again.')
       }
     } finally {
       setUpdating(false)
@@ -303,25 +342,27 @@ function UpdateTracking() {
         </div>
       </div>
 
-      <div className="card">
-        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Add Current Location</h2>
-        <form onSubmit={handleAddLocation}>
-          <div className="input-group">
-            <input
-              type="text"
-              className="input"
-              placeholder="Where are you right now? (e.g., Just left the coffee shop)"
-              value={currentLocation}
-              onChange={(e) => setCurrentLocation(e.target.value)}
-            />
-          </div>
-          <div className="button-center">
-            <button type="submit" className="button" disabled={updating}>
-              {updating ? 'Updating...' : 'Update Location'}
-            </button>
-          </div>
-        </form>
-      </div>
+      {trackingData.status !== 'Delivered' && (
+        <div className="card">
+          <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Add Current Location</h2>
+          <form onSubmit={handleAddLocation}>
+            <div className="input-group">
+              <input
+                type="text"
+                className="input"
+                placeholder="Where are you right now? (e.g., Just left the coffee shop)"
+                value={currentLocation}
+                onChange={(e) => setCurrentLocation(e.target.value)}
+              />
+            </div>
+            <div className="button-center">
+              <button type="submit" className="button" disabled={updating}>
+                {updating ? 'Updating...' : 'Update Location'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="card" style={{ padding: '1.5rem' }}>
         <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update Status</h2>
@@ -348,24 +389,48 @@ function UpdateTracking() {
         </form>
       </div>
 
-      <div className="card" style={{ padding: '1.5rem' }}>
-        <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update ETA</h2>
-        <form onSubmit={handleUpdateEta}>
-          <div className="input-group">
-            <input
-              type="datetime-local"
-              className="input"
-              value={newEta}
-              onChange={(e) => setNewEta(e.target.value)}
-            />
-          </div>
-          <div className="button-center">
-            <button type="submit" className="button" disabled={updating}>
-              {updating ? 'Updating...' : 'Update ETA'}
-            </button>
-          </div>
-        </form>
-      </div>
+      {trackingData.status !== 'Delivered' && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update Destination</h2>
+          <form onSubmit={handleUpdateDestination}>
+            <div className="input-group">
+              <input
+                type="text"
+                className="input"
+                placeholder="New destination"
+                value={trackingData.destination}
+                onChange={(e) => setTrackingData(prev => prev ? { ...prev, destination: e.target.value } : null)}
+              />
+            </div>
+            <div className="button-center">
+              <button type="submit" className="button" disabled={updating}>
+                {updating ? 'Updating...' : 'Update Destination'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {trackingData.status !== 'Delivered' && (
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Update ETA</h2>
+          <form onSubmit={handleUpdateEta}>
+            <div className="input-group">
+              <input
+                type="datetime-local"
+                className="input"
+                value={newEta}
+                onChange={(e) => setNewEta(e.target.value)}
+              />
+            </div>
+            <div className="button-center">
+              <button type="submit" className="button" disabled={updating}>
+                {updating ? 'Updating...' : 'Update ETA'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="button-center" style={{ gap: '1rem' }}>
         <button 
