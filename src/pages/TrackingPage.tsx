@@ -204,11 +204,14 @@ function TrackingPage() {
     }
   }
 
-  const getStatusIcon = (index: number, location?: string) => {
+  const getStatusIcon = (index: number, location?: string, isFirstStep?: boolean) => {
     if (location === 'Delivered') {
       return '🥳'
     }
-    const icons = ['🚀', '🛣️', '🏃‍♂️', '🎯', '💕']
+    if (isFirstStep) {
+      return '🚀'
+    }
+    const icons = ['💘', '💖', '💝', '💕', '💞', '💗', '💓']
     return icons[index % icons.length]
   }
 
@@ -300,17 +303,20 @@ function TrackingPage() {
             {trackingData.trackRecords
               .slice()
               .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-              .map((record, index) => (
-              <div key={record.id} className="timeline-item">
-                <div className="timeline-dot">
-                  {getStatusIcon(index, record.location)}
+              .map((record, index, sortedArray) => {
+                const isFirstStep = index === sortedArray.length - 1;
+                return (
+                <div key={record.id} className="timeline-item">
+                  <div className="timeline-dot">
+                    {getStatusIcon(index, record.location, isFirstStep)}
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-location" style={{ fontSize: '1.3em', fontWeight: '500' }}>{record.location}</div>
+                    <div className="timeline-time" style={{ fontSize: '0.8em' }}>{formatDateTime(record.timestamp)}</div>
+                  </div>
                 </div>
-                <div className="timeline-content">
-                  <div className="timeline-location" style={{ fontSize: '1.3em', fontWeight: '500' }}>{record.location}</div>
-                  <div className="timeline-time" style={{ fontSize: '0.8em' }}>{formatDateTime(record.timestamp)}</div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         )}
       </div>
