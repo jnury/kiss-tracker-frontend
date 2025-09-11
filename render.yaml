@@ -10,6 +10,8 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://kiss-tracker-backend.onrender.com
+      - key: VITE_SHARE_URL
+        value: https://track.kiss-tracker.com
     routes:
       - type: rewrite
         source: /*

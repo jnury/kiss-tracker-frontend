@@ -233,8 +233,9 @@ function TrackingPage() {
   }
 
   const getBackendShareUrl = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-    return `${apiUrl}/${trackingData.trackingNumber}`
+    // Use VITE_SHARE_URL for production (track.kisstracking.com) or fall back to API URL
+    const shareUrl = import.meta.env.VITE_SHARE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    return `${shareUrl}/${trackingData.trackingNumber}`
   }
 
   const formatEtaForMeta = (etaString: string) => {
