@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
 
 interface TrackingData {
@@ -226,8 +227,44 @@ function TrackingPage() {
     }
   }
 
+  const getAbsoluteImageUrl = () => {
+    const baseUrl = window.location.origin
+    return `${baseUrl}/logo_01.png`
+  }
+
+  const formatEtaForMeta = (etaString: string) => {
+    return new Date(etaString).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
   return (
     <div className="container">
+      <Helmet>
+        <title>{`Kiss Tracking #${trackingData.trackingNumber} - Kiss Tracker`}</title>
+        <meta name="description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
+        
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content={`Kiss Delivery to ${trackingData.destination}`} />
+        <meta property="og:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
+        <meta property="og:image" content={getAbsoluteImageUrl()} />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Kiss Tracker" />
+        
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`Kiss Delivery to ${trackingData.destination}`} />
+        <meta name="twitter:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
+        <meta name="twitter:image" content={getAbsoluteImageUrl()} />
+      </Helmet>
+
       <h1 className="title" style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5em' }}>Kiss Tracking</h1>
 
       <div className="card" style={{ padding: '0.75rem', marginBottom: '0.75rem', minWidth: '320px' }}>
