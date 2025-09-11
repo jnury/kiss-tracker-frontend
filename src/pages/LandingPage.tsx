@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import logo01 from '../assets/logo_01.png'
 import logo02 from '../assets/logo_02.png'
 import logo03 from '../assets/logo_03.png'
@@ -33,8 +34,34 @@ function LandingPage() {
     navigate('/create')
   }
 
+  const getAbsoluteImageUrl = () => {
+    const baseUrl = window.location.origin
+    return `${baseUrl}/logo_01.png`
+  }
+
   return (
     <div className="container">
+      <Helmet>
+        <title>Kiss Tracker - Romantic Delivery Tracking</title>
+        <meta name="description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
+        
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content="Kiss Tracker - Romantic Delivery Tracking" />
+        <meta property="og:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
+        <meta property="og:image" content={getAbsoluteImageUrl()} />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Kiss Tracker" />
+        
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Kiss Tracker - Romantic Delivery Tracking" />
+        <meta name="twitter:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
+        <meta name="twitter:image" content={getAbsoluteImageUrl()} />
+      </Helmet>
+
       <div className="header">
         <div className="logo">
           <img src={logoSrc} alt="Kiss Tracker" style={{ height: '150px' }} />

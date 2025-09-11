@@ -232,6 +232,11 @@ function TrackingPage() {
     return `${baseUrl}/logo_01.png`
   }
 
+  const getBackendShareUrl = () => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+    return `${apiUrl}/${trackingData.trackingNumber}`
+  }
+
   const formatEtaForMeta = (etaString: string) => {
     return new Date(etaString).toLocaleDateString('en-US', {
       weekday: 'long',
@@ -254,7 +259,7 @@ function TrackingPage() {
         <meta property="og:image" content={getAbsoluteImageUrl()} />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={getBackendShareUrl()} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
 import { useToast } from '../components/Toast'
 
@@ -62,8 +63,34 @@ function CreateTracking() {
     }
   }
 
+  const getAbsoluteImageUrl = () => {
+    const baseUrl = window.location.origin
+    return `${baseUrl}/logo_01.png`
+  }
+
   return (
     <div className="container">
+      <Helmet>
+        <title>Create Kiss Delivery - Kiss Tracker</title>
+        <meta name="description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
+        
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content="Create Kiss Delivery - Kiss Tracker" />
+        <meta property="og:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
+        <meta property="og:image" content={getAbsoluteImageUrl()} />
+        <meta property="og:image:width" content="512" />
+        <meta property="og:image:height" content="512" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Kiss Tracker" />
+        
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Create Kiss Delivery - Kiss Tracker" />
+        <meta name="twitter:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
+        <meta name="twitter:image" content={getAbsoluteImageUrl()} />
+      </Helmet>
+
       <div className="header">
         <h1 className="title" style={{ textAlign: 'center' }}>Create Kiss Delivery</h1>
         <p className="subtitle" style={{ textAlign: 'center' }}>Set up tracking for your romantic journey</p>
