@@ -37,7 +37,7 @@ function LandingPage() {
         {/* Open Graph Meta Tags */}
         <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
-        <meta property="og:image" content="/logo_01.png" />
+        <meta property="og:image" content="/logo_og.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
         <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : '/'} />
@@ -48,7 +48,7 @@ function LandingPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
-        <meta name="twitter:image" content="/logo_01.png" />
+        <meta name="twitter:image" content="/logo_og.png" />
       </Helmet>
 
       <div className="header">
