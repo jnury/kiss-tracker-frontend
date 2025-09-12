@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
+import { config } from '../config'
 
 interface TrackingData {
   trackingNumber: string
@@ -27,7 +28,7 @@ function TrackingPage() {
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}`)
+        const response = await axios.get(`${config.apiUrl}/api/tracking/${trackingNumber}`)
         setTrackingData(response.data)
       } catch (error) {
         setError('Tracking number not found')
@@ -50,8 +51,7 @@ function TrackingPage() {
     let isConnected = false
 
     const connect = () => {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      eventSource = new EventSource(`${apiUrl}/api/tracking/${trackingNumber}/events`)
+      eventSource = new EventSource(`${config.apiUrl}/api/tracking/${trackingNumber}/events`)
       
       console.log('📡 Connecting to SSE for tracking:', trackingNumber)
       
@@ -227,10 +227,6 @@ function TrackingPage() {
     }
   }
 
-  const getAbsoluteImageUrl = () => {
-    const baseUrl = window.location.origin
-    return `${baseUrl}/logo_01.png`
-  }
 
 
   const formatEtaForMeta = (etaString: string) => {
@@ -250,20 +246,20 @@ function TrackingPage() {
         <meta name="description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
         
         {/* Open Graph Meta Tags */}
-        <meta property="og:title" content={`Kiss Delivery to ${trackingData.destination}`} />
+        <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta property="og:image" content={getAbsoluteImageUrl()} />
+        <meta property="og:image" content={config.getAssetUrl('/logo_01.png')} />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : config.frontendUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Kiss Delivery to ${trackingData.destination}`} />
+        <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta name="twitter:image" content={getAbsoluteImageUrl()} />
+        <meta name="twitter:image" content={config.getAssetUrl('/logo_01.png')} />
       </Helmet>
 
       <h1 className="title" style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5em' }}>Kiss Tracking</h1>

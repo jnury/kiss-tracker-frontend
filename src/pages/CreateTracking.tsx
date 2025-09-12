@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
 import { useToast } from '../components/Toast'
+import { config } from '../config'
 
 function CreateTracking() {
   // Generate default ETA (now + 1 hour)
@@ -49,7 +50,7 @@ function CreateTracking() {
         ...formData,
         eta: convertToUTC(formData.eta)
       }
-      const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking`, dataToSend)
+      const response = await axios.post(`${config.apiUrl}/api/tracking`, dataToSend)
       // Extract the update key from the updateLink URL
       const updateLink = response.data.updateLink
       const urlParams = new URLSearchParams(updateLink.split('?')[1])
@@ -63,10 +64,6 @@ function CreateTracking() {
     }
   }
 
-  const getAbsoluteImageUrl = () => {
-    const baseUrl = window.location.origin
-    return `${baseUrl}/logo_01.png`
-  }
 
   return (
     <div className="container">
@@ -75,20 +72,20 @@ function CreateTracking() {
         <meta name="description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
         
         {/* Open Graph Meta Tags */}
-        <meta property="og:title" content="Create Kiss Delivery - Kiss Tracker" />
+        <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
-        <meta property="og:image" content={getAbsoluteImageUrl()} />
+        <meta property="og:image" content={config.getAssetUrl('/logo_01.png')} />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : config.frontendUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Create Kiss Delivery - Kiss Tracker" />
+        <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
-        <meta name="twitter:image" content={getAbsoluteImageUrl()} />
+        <meta name="twitter:image" content={config.getAssetUrl('/logo_01.png')} />
       </Helmet>
 
       <div className="header">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { useToast } from '../components/Toast'
+import { config } from '../config'
 
 interface TrackingData {
   trackingNumber: string
@@ -61,7 +62,7 @@ function UpdateTracking() {
       }
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/update?key=${updateKey}`)
+        const response = await axios.get(`${config.apiUrl}/api/tracking/${trackingNumber}/update?key=${updateKey}`)
         setTrackingData(response.data)
         // Use existing ETA (converted to local format) or default to now + 1 hour
         setNewEta(response.data.eta ? formatDateForInput(response.data.eta) : getDefaultEta())
@@ -92,8 +93,7 @@ function UpdateTracking() {
     let isConnected = false
 
     const connect = () => {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      eventSource = new EventSource(`${apiUrl}/api/tracking/${trackingNumber}/events`)
+      eventSource = new EventSource(`${config.apiUrl}/api/tracking/${trackingNumber}/events`)
       
       console.log('📡 Update page connecting to SSE for tracking:', trackingNumber)
       
@@ -167,7 +167,7 @@ function UpdateTracking() {
 
     setUpdating(true)
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/location?key=${updateKey}`, {
+      await axios.post(`${config.apiUrl}/api/tracking/${trackingNumber}/location?key=${updateKey}`, {
         location: currentLocation.trim()
       })
       setCurrentLocation('')
@@ -196,7 +196,7 @@ function UpdateTracking() {
 
     setUpdating(true)
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/eta?key=${updateKey}`, {
+      await axios.put(`${config.apiUrl}/api/tracking/${trackingNumber}/eta?key=${updateKey}`, {
         eta: convertToUTC(newEta)
       })
       setTrackingData(prev => prev ? { ...prev, eta: convertToUTC(newEta) } : null)
@@ -219,7 +219,7 @@ function UpdateTracking() {
 
     setUpdating(true)
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/destination?key=${updateKey}`, {
+      await axios.put(`${config.apiUrl}/api/tracking/${trackingNumber}/destination?key=${updateKey}`, {
         destination: trackingData.destination
       })
       showToast('Destination updated successfully!')
@@ -241,7 +241,7 @@ function UpdateTracking() {
 
     setUpdating(true)
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking/${trackingNumber}/status?key=${updateKey}`, {
+      await axios.put(`${config.apiUrl}/api/tracking/${trackingNumber}/status?key=${updateKey}`, {
         status: newStatus
       })
       setTrackingData(prev => prev ? { ...prev, status: newStatus } : null)
