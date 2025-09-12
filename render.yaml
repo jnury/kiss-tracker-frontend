@@ -9,7 +9,7 @@ services:
       - www.kiss-tracker.com
     envVars:
       - key: VITE_API_URL
-        value: https://kiss-tracker-backend.onrender.com
+        value: https://track.kiss-tracker.com
       - key: VITE_FRONTEND_URL
         value: https://kiss-tracker.com
     routes:
