@@ -45,15 +45,9 @@ function CreateTracking() {
     setLoading(true)
     
     try {
-      // Detect user's timezone and locale with fallbacks to Europe/Zurich and en-CH
-      const creatorTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Zurich'
-      const creatorLocale = navigator.language || 'en-CH'
-      
       const dataToSend = {
         ...formData,
-        eta: convertToUTC(formData.eta),
-        creatorTimezone,
-        creatorLocale
+        eta: convertToUTC(formData.eta)
       }
       const response = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/tracking`, dataToSend)
       // Extract the update key from the updateLink URL
