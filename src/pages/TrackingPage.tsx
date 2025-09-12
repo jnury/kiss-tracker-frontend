@@ -248,10 +248,10 @@ function TrackingPage() {
         {/* Open Graph Meta Tags */}
         <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta property="og:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta property="og:image" content="/logo_01.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : config.frontendUrl} />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : '/'} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         
@@ -259,7 +259,7 @@ function TrackingPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta name="twitter:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta name="twitter:image" content="/logo_01.png" />
       </Helmet>
 
       <h1 className="title" style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5em' }}>Kiss Tracking</h1>

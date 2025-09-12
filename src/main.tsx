@@ -4,8 +4,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import './index.css'
-import faviconIco from './assets/favicon.ico'
-import faviconPng from './assets/favicon.png'
 
 // Update favicon links dynamically
 const updateFavicon = () => {
@@ -15,20 +13,20 @@ const updateFavicon = () => {
   const iconLink = document.createElement('link')
   iconLink.rel = 'icon'
   iconLink.type = 'image/x-icon'
-  iconLink.href = faviconIco
+  iconLink.href = '/favicon.ico'
   document.head.appendChild(iconLink)
   
   const pngLink = document.createElement('link')
   pngLink.rel = 'icon'
   pngLink.type = 'image/png'
   pngLink.sizes = '32x32'
-  pngLink.href = faviconPng
+  pngLink.href = '/favicon.png'
   document.head.appendChild(pngLink)
   
   const appleLink = document.createElement('link')
   appleLink.rel = 'apple-touch-icon'
   appleLink.sizes = '180x180'
-  appleLink.href = faviconPng
+  appleLink.href = '/favicon.png'
   document.head.appendChild(appleLink)
 }
 

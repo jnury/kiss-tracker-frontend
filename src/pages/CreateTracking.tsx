@@ -74,10 +74,10 @@ function CreateTracking() {
         {/* Open Graph Meta Tags */}
         <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
-        <meta property="og:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta property="og:image" content="/logo_01.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : config.frontendUrl} />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : '/'} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         
@@ -85,7 +85,7 @@ function CreateTracking() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content="Create a new kiss delivery tracking. Set up romantic journey tracking and share it with your special someone." />
-        <meta name="twitter:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta name="twitter:image" content="/logo_01.png" />
       </Helmet>
 
       <div className="header">

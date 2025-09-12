@@ -2,14 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { config } from '../config'
-import logo01 from '../assets/logo_01.png'
-import logo02 from '../assets/logo_02.png'
-import logo03 from '../assets/logo_03.png'
-import logo04 from '../assets/logo_04.png'
-import logo05 from '../assets/logo_05.png'
-import logo06 from '../assets/logo_06.png'
-import logo07 from '../assets/logo_07.png'
-import logo08 from '../assets/logo_08.png'
 
 function LandingPage() {
   const [trackingNumber, setTrackingNumber] = useState('')
@@ -17,9 +9,9 @@ function LandingPage() {
   
   // Randomly select a logo from available logos
   const getRandomLogo = () => {
-    const logos = [logo01, logo02, logo03, logo04, logo05, logo06, logo07, logo08]
-    const randomIndex = Math.floor(Math.random() * logos.length)
-    return logos[randomIndex]
+    const logoNumbers = [1, 2, 3, 4, 5, 6, 7, 8]
+    const randomIndex = Math.floor(Math.random() * logoNumbers.length)
+    return `/logo_0${logoNumbers[randomIndex]}.png`
   }
   
   const [logoSrc] = useState(getRandomLogo())
@@ -45,10 +37,10 @@ function LandingPage() {
         {/* Open Graph Meta Tags */}
         <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
-        <meta property="og:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta property="og:image" content="/logo_01.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
-        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : config.frontendUrl} />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : '/'} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Kiss Tracker" />
         
@@ -56,7 +48,7 @@ function LandingPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content="Track your love delivery with romantic precision. Create and track kiss deliveries in real time with Kiss Tracker." />
-        <meta name="twitter:image" content={config.getAssetUrl('/logo_01.png')} />
+        <meta name="twitter:image" content="/logo_01.png" />
       </Helmet>
 
       <div className="header">
