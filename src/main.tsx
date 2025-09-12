@@ -5,32 +5,6 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import './index.css'
 
-// Update favicon links dynamically
-const updateFavicon = () => {
-  const existingLinks = document.querySelectorAll('link[rel*="icon"]')
-  existingLinks.forEach(link => link.remove())
-  
-  const iconLink = document.createElement('link')
-  iconLink.rel = 'icon'
-  iconLink.type = 'image/x-icon'
-  iconLink.href = '/favicon.ico'
-  document.head.appendChild(iconLink)
-  
-  const pngLink = document.createElement('link')
-  pngLink.rel = 'icon'
-  pngLink.type = 'image/png'
-  pngLink.sizes = '32x32'
-  pngLink.href = '/favicon.png'
-  document.head.appendChild(pngLink)
-  
-  const appleLink = document.createElement('link')
-  appleLink.rel = 'apple-touch-icon'
-  appleLink.sizes = '180x180'
-  appleLink.href = '/favicon.png'
-  document.head.appendChild(appleLink)
-}
-
-updateFavicon()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

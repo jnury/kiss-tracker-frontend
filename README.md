@@ -48,7 +48,7 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 ## Social Media Integration
 
 ### Open Graph Support
-- **Dedicated logo**: High-quality `logo_og.png` (512x512) for social sharing
+- **Dedicated logo**: High-quality `logo.png` (512x512) for social sharing
 - **Dynamic meta tags**: Different descriptions per page
 - **Consistent branding**: "Kiss Tracker" title across all platforms
 - **WhatsApp preview**: Optimized for messaging app previews
@@ -63,7 +63,7 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 
 ### Image Optimization
 - **UI Logos**: 8 romantic logos optimized to 256x256 (59-87KB each)
-- **Open Graph**: Dedicated `logo_og.png` at full 512x512 quality (270KB)
+- **Open Graph**: Dedicated `logo.png` at full 512x512 quality (270KB)
 - **Favicon**: Optimized to 64x64 (5.2KB)
 - **Total savings**: 58% reduction from 2.1MB to 876KB
 
@@ -140,7 +140,7 @@ src/
 
 public/
 ├── logo_01.png - logo_08.png  # Optimized UI logos (256x256)
-├── logo_og.png                # Open Graph logo (512x512)
+├── logo.png                # Open Graph logo (512x512)
 ├── favicon.ico                # Browser favicon
 └── favicon.png                # PNG favicon (64x64)
 ```

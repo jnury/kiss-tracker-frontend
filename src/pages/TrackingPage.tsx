@@ -248,7 +248,7 @@ function TrackingPage() {
         {/* Open Graph Meta Tags */}
         <meta property="og:title" content="Kiss Tracker" />
         <meta property="og:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta property="og:image" content="/logo_og.png" />
+        <meta property="og:image" content="/logo.png" />
         <meta property="og:image:width" content="512" />
         <meta property="og:image:height" content="512" />
         <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : '/'} />
@@ -259,7 +259,7 @@ function TrackingPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Kiss Tracker" />
         <meta name="twitter:description" content={`Track in real time your delivery planned for ${formatEtaForMeta(trackingData.eta)}`} />
-        <meta name="twitter:image" content="/logo_og.png" />
+        <meta name="twitter:image" content="/logo.png" />
       </Helmet>
 
       <h1 className="title" style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2.5em' }}>Kiss Tracking</h1>
