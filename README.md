@@ -8,6 +8,8 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 - 💌 **Create Tracking**: Set up kiss delivery with provider name, destination, and ETA
 - 👀 **Public Tracking**: Beautiful timeline view of delivery progress with real-time updates
 - 📱 **Update Interface**: Private update page for providers to add locations and modify details
+- 💾 **Client-side Persistence**: Save and manage trackings locally without registration
+- 📋 **My Trackings**: Dashboard to view, edit, and delete saved trackings
 - ⚡ **Real-time Updates**: Server-Sent Events (SSE) for instant notifications
 - 🌐 **Social Sharing**: Open Graph meta tags optimized for WhatsApp/social media
 - 📊 **Performance**: Optimized images (58% size reduction) for fast loading
@@ -15,10 +17,12 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 ## Tech Stack
 
 - **React 18 + TypeScript**: Modern React with full type safety
-- **Vite**: Fast build tooling and hot module replacement
+- **Vite**: Fast build tooling and hot module replacement with build-time variables
 - **React Router**: Client-side routing with React Router v6
 - **React Helmet Async**: Dynamic SEO meta tags and Open Graph data
 - **Axios**: HTTP client for API communication
+- **date-fns**: Date formatting and manipulation library
+- **localStorage**: Client-side persistence for tracking management
 - **Server-Sent Events**: Real-time updates without WebSocket complexity
 - **Responsive Design**: Mobile-first CSS with romantic styling
 
@@ -28,6 +32,7 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 - `/create` - Create new kiss delivery tracking
 - `/track/:trackingNumber` - Public tracking view with timeline
 - `/update/:trackingNumber?key=SECRET` - Private update interface
+- `/my-trackings` - Personal dashboard for saved trackings management
 
 ## Real-time Features
 
@@ -44,6 +49,21 @@ Romantic parcel tracking experience for couples with real-time updates and socia
 - Success/error feedback for all user actions
 - Clipboard copy confirmations
 - Real-time update notifications
+
+## Client-side Persistence
+
+### localStorage Service
+- **No Registration Required**: Trackings saved locally without user accounts
+- **Automatic Saving**: New trackings auto-saved when created
+- **Data Validation**: Invalid tracking data automatically cleaned up
+- **Secure Storage**: Update keys stored locally for authorized access
+
+### My Trackings Dashboard
+- **Batch Loading**: Efficient API calls to load multiple trackings
+- **Status Overview**: Color-coded status badges for quick status identification
+- **Quick Actions**: Edit, delete, and view trackings with one click
+- **Auto-cleanup**: Invalid or expired trackings automatically removed
+- **Responsive Cards**: Consistent design with destination and ETA display
 
 ## Social Media Integration
 
@@ -128,14 +148,19 @@ VITE_API_URL=https://track.kiss-tracker.com
 ```
 src/
 ├── components/
-│   └── Toast.tsx          # Toast notification system
+│   ├── Toast.tsx          # Toast notification system
+│   └── TrackingCard.tsx   # Reusable tracking display component
 ├── pages/
 │   ├── LandingPage.tsx    # Home page with random logos
 │   ├── CreateTracking.tsx # New tracking creation
 │   ├── TrackingPage.tsx   # Public tracking view
-│   └── UpdateTracking.tsx # Private update interface
+│   ├── UpdateTracking.tsx # Private update interface
+│   └── MyTrackings.tsx    # Personal tracking dashboard
+├── services/
+│   └── trackingStorage.ts # localStorage service for persistence
 ├── config.ts              # Centralized configuration
 ├── index.css              # Global styles
+├── vite-env.d.ts          # Vite TypeScript declarations
 └── main.tsx               # App entry point
 
 public/

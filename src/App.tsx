@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage'
 import CreateTracking from './pages/CreateTracking'
 import TrackingPage from './pages/TrackingPage'
 import UpdateTracking from './pages/UpdateTracking'
+import MyTrackings from './pages/MyTrackings'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/create" element={<CreateTracking />} />
         <Route path="/track/:trackingNumber" element={<TrackingPage />} />
         <Route path="/update/:trackingNumber" element={<UpdateTracking />} />
+        <Route path="/my-trackings" element={<MyTrackings />} />
       </Routes>
     </div>
   )

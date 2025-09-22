@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async'
 import axios from 'axios'
 import { useToast } from '../components/Toast'
 import { config } from '../config'
+import { trackingStorage } from '../services/trackingStorage'
 
 function CreateTracking() {
   // Generate default ETA (now + 1 hour)
@@ -44,17 +45,24 @@ function CreateTracking() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    
+
     try {
       const dataToSend = {
         ...formData,
         eta: convertToUTC(formData.eta)
       }
       const response = await axios.post(`${config.apiUrl}/api/tracking`, dataToSend)
+
       // Extract the update key from the updateLink URL
       const updateLink = response.data.updateLink
       const urlParams = new URLSearchParams(updateLink.split('?')[1])
       const updateKey = urlParams.get('key')
+
+      // Auto-save the tracking to localStorage
+      if (updateKey) {
+        trackingStorage.addTrackingFromData(response.data, updateKey)
+      }
+
       navigate(`/update/${response.data.trackingNumber}?key=${updateKey}`)
     } catch (error) {
       console.error('Error creating tracking:', error)

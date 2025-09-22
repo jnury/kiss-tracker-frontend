@@ -35,7 +35,7 @@ export function Toast({ message, onClose }: ToastProps) {
 export function useToast() {
   const [toast, setToast] = useState<string | null>(null)
 
-  const showToast = (message: string) => {
+  const showToast = (message: string, type?: 'success' | 'error') => {
     setToast(message)
   }
 

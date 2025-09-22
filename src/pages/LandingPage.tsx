@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { config } from '../config'
+import { trackingStorage } from '../services/trackingStorage'
 
 function LandingPage() {
   const [trackingNumber, setTrackingNumber] = useState('')
@@ -26,6 +27,12 @@ function LandingPage() {
   const handleCreateNew = () => {
     navigate('/create')
   }
+
+  const handleMyTrackings = () => {
+    navigate('/my-trackings')
+  }
+
+  const savedTrackingsCount = trackingStorage.getSavedTrackings().length
 
 
   return (
@@ -93,6 +100,40 @@ function LandingPage() {
             Create New Tracking
           </button>
         </div>
+      </div>
+
+      {savedTrackingsCount > 0 && (
+        <div className="card">
+          <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>
+            My Trackings
+          </h2>
+          <p style={{ textAlign: 'center', marginBottom: '2rem', color: '#666' }}>
+            You have {savedTrackingsCount} tracking{savedTrackingsCount !== 1 ? 's' : ''} in your list
+          </p>
+          <div className="button-center">
+            <button
+              className="button"
+              style={{
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                fontWeight: 'bold'
+              }}
+              onClick={handleMyTrackings}
+            >
+              View My Trackings
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{
+        textAlign: 'center',
+        marginTop: '1rem',
+        fontSize: '0.75rem',
+        color: 'rgba(255, 255, 255, 0.6)'
+      }}>
+        Kiss Tracker v{__APP_VERSION__}
       </div>
     </div>
   )
